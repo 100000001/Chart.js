@@ -14,7 +14,7 @@ var gulp = require('gulp'),
   package = require('./package.json'),
   bower = require('./bower.json'),
   karma = require('gulp-karma'),
-  browserify = require('browserify'),
+  persistify = require('persistify'),
   streamify = require('gulp-streamify'),
   source = require('vinyl-source-stream'),
   merge = require('merge-stream');
@@ -54,7 +54,8 @@ gulp.task('default', ['build', 'watch']);
 
 function buildTask() {
 
-  var bundled = browserify('./src/Chart.js')
+  var bundled = persistify()
+    .add('./src/Chart.js')
     .bundle()
     .pipe(source('Chart.bundle.js'))
     .pipe(streamify(replace('{{ version }}', package.version)))
@@ -65,7 +66,8 @@ function buildTask() {
     .pipe(streamify(concat('Chart.bundle.min.js')))
     .pipe(gulp.dest(outDir));
 
-  var nonBundled = browserify('./src/Chart.js')
+  var nonBundled = persistify()
+    .add('./src/Chart.js')
     .ignore('moment')
     .bundle()
     .pipe(source('Chart.js'))
